@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bin.kong.security.dao.mapper.user.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.bin.kong.security.model.user.entity.UserInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="login_name" property="login_name" jdbcType="VARCHAR"/>
+        <result column="login_pwd" property="login_pwd" jdbcType="VARCHAR"/>
+        <result column="encrypt_type" property="encrypt_type" jdbcType="INTEGER"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_type" property="user_type" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, login_name, login_pwd, encrypt_type, create_time, update_time, phone, description,
+    user_type
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insertSelective" parameterType="com.bin.kong.security.model.user.entity.UserInfo">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="login_name != null">
+                login_name,
+            </if>
+            <if test="login_pwd != null">
+                login_pwd,
+            </if>
+            <if test="encrypt_type != null">
+                encrypt_type,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="update_time != null">
+                update_time,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="user_type != null">
+                user_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="login_name != null">
+                #{login_name,jdbcType=VARCHAR},
+            </if>
+            <if test="login_pwd != null">
+                #{login_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="encrypt_type != null">
+                #{encrypt_type,jdbcType=INTEGER},
+            </if>
+            <if test="create_time != null">
+                #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="update_time != null">
+                #{update_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="user_type != null">
+                #{user_type,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bin.kong.security.model.user.entity.UserInfo">
+        update user_info
+        <set>
+            <if test="login_name != null">
+                login_name = #{login_name,jdbcType=VARCHAR},
+            </if>
+            <if test="login_pwd != null">
+                login_pwd = #{login_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="encrypt_type != null">
+                encrypt_type = #{encrypt_type,jdbcType=INTEGER},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="user_type != null">
+                user_type = #{user_type,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="selectList" resultMap="BaseResultMap"
+            parameterType="com.bin.kong.security.model.user.entity.UserInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where 1=1
+        <if test="login_name != null and login_name.length>0">
+            and login_name =#{login_name}
+        </if>
+
+    </select>
+</mapper>

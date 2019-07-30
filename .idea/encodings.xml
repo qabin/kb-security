@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/kb-security-backend" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kb-security-backend/contract" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kb-security-backend/core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kb-security-backend/dao" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kb-security-backend/model" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kb-security-backend/server" charset="UTF-8" />
+  </component>
+</project>

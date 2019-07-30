@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bin.kong.security.dao.mapper.xss.XssInfoMapper">
+    <resultMap id="BaseResultMap" type="com.bin.kong.security.model.xss.entity.XssInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="domain" property="domain" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="cookie" property="cookie" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="img" property="img" jdbcType="VARCHAR"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+        <result column="user_agent" property="user_agent" jdbcType="VARCHAR"/>
+        <result column="command" property="command" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, domain, url, cookie, ip, img, create_time, user_agent,command,type
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from xss_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from xss_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.bin.kong.security.model.xss.entity.XssInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into xss_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="domain != null">
+                domain,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="cookie != null">
+                cookie,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="img != null">
+                img,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="user_agent != null">
+                user_agent,
+            </if>
+            <if test="command != null">
+                command,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="domain != null">
+                #{domain,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="cookie != null">
+                #{cookie,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="img != null">
+                #{img,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="user_agent != null">
+                #{user_agent,jdbcType=VARCHAR},
+            </if>
+            <if test="command != null">
+                #{command,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bin.kong.security.model.xss.entity.XssInfo">
+        update xss_info
+        <set>
+            <if test="command != null">
+                command = #{command,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="searchList" resultMap="BaseResultMap"
+            parameterType="com.bin.kong.security.model.xss.search.XssInfoSearch">
+        select
+        <include refid="Base_Column_List"/>
+        from xss_info
+        where 1=1
+        <if test="searchKey != null and searchKey.length>0">
+            and (domain like CONCAT('%',#{searchKey},'%'))
+        </if>
+        <if test="type!=null and type!=0">
+            and type =#{type}
+        </if>
+
+        order by id desc
+        <choose>
+            <when test="pageSize != null and pageNum !=null">
+                limit #{startNum},#{pageSize}
+            </when>
+            <otherwise>
+                limit 100
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="searchCount" resultType="java.lang.Integer"
+            parameterType="com.bin.kong.security.model.xss.search.XssInfoSearch">
+        select
+        count(*)
+        from xss_info
+        where 1=1
+        <if test="searchKey != null and searchKey.length>0">
+            and (domain like CONCAT('%',#{searchKey},'%'))
+        </if>
+
+        <if test="type!=null and type!=0">
+            and type =#{type}
+        </if>
+
+    </select>
+</mapper>

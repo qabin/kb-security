@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bin.kong.security.dao.mapper.chat.ChatInfoMapper">
+    <resultMap id="BaseResultMap" type="com.bin.kong.security.model.chat.entity.ChatInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="login_name" property="login_name" jdbcType="VARCHAR"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+        <result column="praise_count" property="praise_count" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, content, login_name, create_time,praise_count
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from chat_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from chat_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.bin.kong.security.model.chat.entity.ChatInfo">
+    insert into chat_info (id, title, content,
+      login_name, create_time)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{login_name,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.bin.kong.security.model.chat.entity.ChatInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into chat_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="login_name != null">
+                login_name,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="login_name != null">
+                #{login_name,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                #{create_time,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bin.kong.security.model.chat.entity.ChatInfo">
+        update chat_info
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="login_name != null">
+                login_name = #{login_name,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="chatPraise" parameterType="com.bin.kong.security.model.chat.entity.ChatInfo">
+        update chat_info
+        <set>
+            praise_count=praise_count+1
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="searchList" resultMap="BaseResultMap"
+            parameterType="com.bin.kong.security.model.chat.search.ChatInfoSearch">
+        select
+        <include refid="Base_Column_List"/>
+        from chat_info
+        where 1=1
+        <if test="searchKey != null and searchKey.length>0">
+            and (title like CONCAT('%',#{searchKey},'%'))
+        </if>
+        <if test="type !=null and type==1">
+            order by id desc
+        </if>
+        <if test="type !=null and type==2">
+            order by praise_count desc
+        </if>
+        <choose>
+            <when test="pageSize != null and pageNum !=null">
+                limit #{startNum},#{pageSize}
+            </when>
+            <otherwise>
+                limit 100
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="searchListNoSafe" resultMap="BaseResultMap"
+            parameterType="com.bin.kong.security.model.chat.search.ChatInfoSearch">
+        select
+        <include refid="Base_Column_List"/>
+        from chat_info
+        where 1=1
+        <if test="login_name != null and login_name.length>0">
+            and login_name =${login_name}
+        </if>
+        <if test="searchKey != null and searchKey.length>0">
+            and title like '%${searchKey}%'
+        </if>
+        <if test="content != null and content.length>0">
+            and content like '${content}'
+        </if>
+        <if test="type !=null and type==1">
+            order by id desc
+        </if>
+        <if test="type !=null and type==2">
+            order by praise_count desc
+        </if>
+        <choose>
+            <when test="pageSize != null and pageNum !=null">
+                limit #{startNum},#{pageSize}
+            </when>
+            <otherwise>
+                limit 100
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="searchCount" resultType="java.lang.Integer"
+            parameterType="com.bin.kong.security.model.chat.search.ChatInfoSearch">
+        select
+        count(*)
+        from chat_info
+        where 1=1
+        <if test="searchKey != null and searchKey.length>0">
+            and (title like CONCAT('%',#{searchKey},'%'))
+        </if>
+        <if test="content != null and content.length>0">
+            and (content like CONCAT('%',#{content},'%'))
+        </if>
+        <if test="login_name != null and login_name.length>0">
+            and login_name=#{login_name}
+        </if>
+
+
+    </select>
+</mapper>
