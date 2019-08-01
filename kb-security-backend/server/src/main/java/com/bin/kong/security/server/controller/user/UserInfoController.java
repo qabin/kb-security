@@ -4,15 +4,13 @@ import com.bin.kong.security.contract.common.GenericResponse;
 import com.bin.kong.security.contract.user.request.LoginRequest;
 import com.bin.kong.security.contract.user.request.RegisterRequest;
 import com.bin.kong.security.contract.user.response.LoginResponse;
+import com.bin.kong.security.contract.user.response.UserInfoResponse;
 import com.bin.kong.security.core.constants.CookieConstants;
 import com.bin.kong.security.core.constants.ResponseConstants;
 import com.bin.kong.security.core.constants.UserInfoConstants;
 import com.bin.kong.security.core.enums.CookieTypeEnum;
 import com.bin.kong.security.core.enums.EncryptTypeEnum;
-import com.bin.kong.security.core.utils.PPAesUtils;
-import com.bin.kong.security.core.utils.PPBase64Utils;
-import com.bin.kong.security.core.utils.PPMd5Utils;
-import com.bin.kong.security.core.utils.PPRsaUtils;
+import com.bin.kong.security.core.utils.*;
 import com.bin.kong.security.model.user.entity.UserInfo;
 import com.bin.kong.security.server.service.user.IUserInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -193,7 +191,13 @@ public class UserInfoController {
             if (ObjectUtils.isEmpty(userInfo))
                 userInfo = (UserInfo) session.getAttribute(UserInfoConstants.CURRENT_USER);
             if (userInfo != null && userInfo.getId() != null) {
-                genericResponse.setData(userInfo);
+                genericResponse.setData(UserInfoResponse.builder()
+                        .encrypt_type(userInfo.getEncrypt_type())
+                        .ip(IpUtils.getLocalIp())
+                        .login_name(userInfo.getLogin_name())
+                        .user_type(userInfo.getUser_type())
+                        .id(userInfo.getId())
+                        .build());
                 genericResponse.setStatus(ResponseConstants.SUCCESS_CODE);
                 genericResponse.setMessage("获取用户信息成功");
             } else {

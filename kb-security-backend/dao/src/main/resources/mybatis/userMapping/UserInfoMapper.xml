@@ -8,12 +8,10 @@
         <result column="encrypt_type" property="encrypt_type" jdbcType="INTEGER"/>
         <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
-        <result column="phone" property="phone" jdbcType="VARCHAR"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="user_type" property="user_type" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, login_name, login_pwd, encrypt_type, create_time, update_time, phone, description,
+    id, login_name, login_pwd, encrypt_type, create_time, update_time,
     user_type
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -47,12 +45,6 @@
             <if test="update_time != null">
                 update_time,
             </if>
-            <if test="phone != null">
-                phone,
-            </if>
-            <if test="description != null">
-                description,
-            </if>
             <if test="user_type != null">
                 user_type,
             </if>
@@ -76,12 +68,6 @@
             <if test="update_time != null">
                 #{update_time,jdbcType=TIMESTAMP},
             </if>
-            <if test="phone != null">
-                #{phone,jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                #{description,jdbcType=VARCHAR},
-            </if>
             <if test="user_type != null">
                 #{user_type,jdbcType=INTEGER},
             </if>
@@ -104,12 +90,6 @@
             </if>
             <if test="update_time != null">
                 update_time = #{update_time,jdbcType=TIMESTAMP},
-            </if>
-            <if test="phone != null">
-                phone = #{phone,jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                description = #{description,jdbcType=VARCHAR},
             </if>
             <if test="user_type != null">
                 user_type = #{user_type,jdbcType=INTEGER},

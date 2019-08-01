@@ -1,4 +1,3 @@
-import CompXssListCatalog from './comp_xsslist_catalog'
 import CompXssListCatalogNew from './comp_xsslist_catalog_new'
 
 export default {

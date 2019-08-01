@@ -25,23 +25,18 @@ export const getUserInfo = ({state}) => {
       ? resolve()
       : ajax_get_user_info()
         .then(d => {
-          state.login_name = d.data.login_name;
-          state.type = d.data.user_type;
-          state.login_id = d.login_id;
-          state.mail = d.mail;
-          state.status = d.status;
-          state.is_admin = d.is_admin;
-          state.roles = [].concat(d['group_roles']).concat(d['user_roles']);
-          state.user_roles = d['user_roles'] || [];
-          state.group_roles = d['group_roles'] || [];
-          state.groups = d.groups;
-          state.tcm_account = d.tcm_account;
-          state.is_login = true;
-          resolve()
+          if (d.status === 1) {
+            state.login_name = d.data.login_name;
+            state.user_type = d.data.user_type;
+            state.id = d.data.id;
+            state.is_admin = d.data.user_type === 2 ? true : false;
+            state.is_login = true;
+            state.ip = d.data.ip;
+            resolve()
+          }
         })
         .catch((e) => {
-          // notify_err('获取用户信息异常');
-          // reject(e)
+          router.push({path: '/login'})
         })
   })
 };
@@ -58,15 +53,20 @@ export const clearLoginState = ({state}) => {
 export const login = (context, form) => {
   return new Promise((r, j) => {
     ajax_login_in(form)
-      .then(() => {
-        localStorage.set('isLogin', true);
-        getUserInfo(context)
-          .then(() => {
-            r();
-            notify_ok(getHello(context.state.name));
-            router.push({path: "/home"});
-          })
-          .catch(j)
+      .then((d) => {
+        if (d.status === 1) {
+          localStorage.set('isLogin', true);
+          getUserInfo(context)
+            .then(() => {
+              r();
+              notify_ok(getHello(context.state.login_name));
+              router.push({path: "/"});
+            })
+            .catch(j)
+        } else {
+          notify_err(d.message)
+        }
+
       })
       .catch(j);
   });
@@ -79,7 +79,7 @@ export const logout = (context) => {
         notify_ok('已登出系统');
         localStorage.set('isLogin', false);
         clearLoginState(context).then(r).catch(j)
-        router.push({path:'/login'})
+        router.push({path: '/login'})
       })
       .catch(j)
 

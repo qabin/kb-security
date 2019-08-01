@@ -1,5 +1,5 @@
 import LazyInput from '../../components/catalog/ComponentLazyInput'
-import {ajax_chat_info_list_search, ajax_chat_praise} from '../../api/chat/chat_info_api'
+import {ajax_chat_info_list_search, ajax_chat_praise,ajax_delete_chat_info} from '../../api/chat/chat_info_api'
 import XssCompChatDetail from './xss_comp_chat_detail'
 import {chat_order_by_enum} from '../../dictionary/chat_dictionary'
 import {show_chat_info_detail_modal} from './modal_chat_info_detail'
@@ -61,14 +61,14 @@ export default {
     },
     render_chat_item (h, data) {
       return h('div', {
-        staticClass: 'q-mt-md q-pb-xl',
+        staticClass: 'q-mt-sm q-pb-xl',
         style: {
-          borderBottom: '1px solid var(--q-color-grey-5)'
+          border: '1px solid var(--q-color-grey-3)'
 
         }
       }, [
         h('div', {
-          staticClass: 'text-weight-bold text-left font-14 nowrap ellipsis overflow-hidden text-primary cursor-pointer',
+          staticClass: 'text-weight-bold text-left font-14 nowrap ellipsis overflow-hidden text-primary cursor-pointer bg-grey-1 q-pa-md',
           on: {
             click: () => {
               this.$router.push({path: '/chat_room', query: {id: data.id, title: data.title}})
@@ -118,7 +118,7 @@ export default {
           staticClass: 'font-12 text-weight-bold q-ml-sm'
         }, data.create_time),
         h('q-icon', {
-          staticClass: 'q-ml-md pp-icon-hover',
+          staticClass: 'q-ml-md pp-icon-hover cursor-pointer',
           props: {
             name: 'thumb_up',
             size: '16px'
@@ -140,7 +140,28 @@ export default {
         }),
         h('div', {
           staticClass: 'font-12 text-weight-bold q-ml-sm'
-        }, data.praise_count)
+        }, data.praise_count),
+        h('q-icon', {
+          staticClass: 'q-ml-md pp-icon-hover cursor-pointer',
+          props: {
+            name: 'delete',
+            size: '16px'
+          },
+          style: 'outline',
+          nativeOn: {
+            click: (v) => {
+              if (this.$store.state.user.login_name) {
+                ajax_delete_chat_info(data.id).then(d => {
+                  if (d.status === 1) {
+                    this.refresh_catalog()
+                  }
+                }).catch()
+              } else {
+                this.$router.push({path: '/login'})
+              }
+            }
+          }
+        }),
 
       ])
     },

@@ -12,9 +12,13 @@
         <result column="user_agent" property="user_agent" jdbcType="VARCHAR"/>
         <result column="command" property="command" jdbcType="VARCHAR"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="user_id" property="user_id" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
+
     </resultMap>
     <sql id="Base_Column_List">
-    id, domain, url, cookie, ip, img, create_time, user_agent,command,type
+    id, domain, url, cookie, ip, img, create_time, user_agent,command,type,user_id,status,update_time
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -61,6 +65,15 @@
             <if test="type != null">
                 type,
             </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="update_time != null">
+                update_time,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -93,6 +106,15 @@
             <if test="type != null">
                 #{type,jdbcType=INTEGER},
             </if>
+            <if test="user_id != null">
+                #{user_id,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="update_time != null">
+                #{update_time,jdbcType=TIMESTAMP},
+            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.bin.kong.security.model.xss.entity.XssInfo">
@@ -100,6 +122,12 @@
         <set>
             <if test="command != null">
                 command = #{command,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time,jdbcType=TIMESTAMP},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -117,6 +145,12 @@
         </if>
         <if test="type!=null and type!=0">
             and type =#{type}
+        </if>
+        <if test="status!=null ">
+            and status =#{status}
+        </if>
+        <if test="user_id!=null ">
+            and user_id =#{user_id}
         </if>
 
         order by id desc
@@ -139,7 +173,12 @@
         <if test="searchKey != null and searchKey.length>0">
             and (domain like CONCAT('%',#{searchKey},'%'))
         </if>
-
+        <if test="status!=null ">
+            and status =#{status}
+        </if>
+        <if test="user_id!=null ">
+            and user_id =#{user_id}
+        </if>
         <if test="type!=null and type!=0">
             and type =#{type}
         </if>

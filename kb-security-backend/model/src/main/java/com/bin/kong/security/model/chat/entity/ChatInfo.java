@@ -23,4 +23,6 @@ public class ChatInfo {
     private Date create_time;
 
     private Integer praise_count;
+
+    private Integer user_id;
 }

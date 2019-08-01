@@ -7,6 +7,7 @@ import store from './store/index'
 import Quasar from './plugins/quasar'
 import PpDialog from './plugins/PpDialog'
 import PpNotify from './plugins/PpNotify'
+import Clipboard from './plugins/clipboard'
 import './css/theme'
 
 Vue.config.productionTip = false
@@ -20,7 +21,7 @@ const app = ({
   template: '<App/>'
 });
 
-[Quasar,PpDialog,PpNotify].forEach(plugin => plugin({
+[Quasar,PpDialog,PpNotify,Clipboard].forEach(plugin => plugin({
   app,
   router,
   store,

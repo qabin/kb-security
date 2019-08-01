@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class XssInfoSearch {
     private String searchKey;
+    private Integer user_id;
+    private Integer status;
     @Builder.Default
     private Integer pageSize = 10;
     @Builder.Default

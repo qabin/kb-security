@@ -31,4 +31,10 @@ public class XssInfo {
     private String command;
 
     private Integer type;
+
+    private Integer user_id;
+
+    private Integer status;
+
+    private Date update_time;
 }

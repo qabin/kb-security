@@ -2,7 +2,7 @@ import CatalogMixin from '../../components/catalog/MixinExpandableCatalogBase'
 import {Optional} from '../../utils/Optional'
 import {chat_order_by_enum} from '../../dictionary/chat_dictionary'
 import LazyInput from '../../components/catalog/ComponentLazyInput'
-import {ajax_chat_info_list_search} from '../../api/chat/chat_info_api'
+import {ajax_chat_info_list_search, ajax_delete_chat_info} from '../../api/chat/chat_info_api'
 import Editor from '../../components/editor/Editor'
 
 export default {
@@ -102,6 +102,26 @@ export default {
           }
         ,
         render: (h, value, props) => Optional.ofNullable(value).orElse('--')
+      },
+      {
+        name: 'options',
+        align: 'left',
+        field: 'options',
+        label: '操作',
+        renderData: {staticClass: 'text-tertiary ', style: {minWidth: '50px', fontWeight: '700'}},
+        render: (h, value, props) => {
+          return h('div',{
+            staticClass:'text-primary cursor-pointer text-weight-bold',
+            on:{
+              click:()=>{
+                ajax_delete_chat_info(props.row.id).then(d=>{
+                  if(d.status===1)
+                    window.location.reload()
+                })
+              }
+            }
+          },'删除')
+        }
       },
     ],
   }),

@@ -38,4 +38,9 @@ public class XssInfoServiceImpl implements IXssInfoService {
     public Integer update(XssInfo info) {
         return mapper.updateByPrimaryKeySelective(info);
     }
+
+    @Override
+    public Integer delete(Integer id) {
+        return mapper.deleteByPrimaryKey(id);
+    }
 }

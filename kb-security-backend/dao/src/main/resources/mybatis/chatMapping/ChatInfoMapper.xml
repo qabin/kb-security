@@ -8,9 +8,11 @@
         <result column="login_name" property="login_name" jdbcType="VARCHAR"/>
         <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
         <result column="praise_count" property="praise_count" jdbcType="INTEGER"/>
+        <result column="user_id" property="user_id" jdbcType="INTEGER"/>
+
     </resultMap>
     <sql id="Base_Column_List">
-    id, title, content, login_name, create_time,praise_count
+    id, title, content, login_name, create_time,praise_count,user_id
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -47,6 +49,9 @@
             <if test="create_time != null">
                 create_time,
             </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -63,6 +68,9 @@
             </if>
             <if test="create_time != null">
                 #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="user_id != null">
+                #{user_id,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -103,6 +111,9 @@
         <if test="searchKey != null and searchKey.length>0">
             and (title like CONCAT('%',#{searchKey},'%'))
         </if>
+        <if test="user_id !=null">
+            and user_id =#{user_id}
+        </if>
         <if test="type !=null and type==1">
             order by id desc
         </if>
@@ -128,6 +139,9 @@
         where 1=1
         <if test="login_name != null and login_name.length>0">
             and login_name =${login_name}
+        </if>
+        <if test="user_id !=null">
+            and user_id =#{user_id}
         </if>
         <if test="searchKey != null and searchKey.length>0">
             and title like '%${searchKey}%'
@@ -160,6 +174,9 @@
         where 1=1
         <if test="searchKey != null and searchKey.length>0">
             and (title like CONCAT('%',#{searchKey},'%'))
+        </if>
+        <if test="user_id !=null">
+            and user_id =#{user_id}
         </if>
         <if test="content != null and content.length>0">
             and (content like CONCAT('%',#{content},'%'))

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatInfoSearch {
     private String searchKey;
+    private Integer user_id;
     @Builder.Default
     private Integer pageSize = 10;
     @Builder.Default

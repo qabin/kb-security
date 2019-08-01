@@ -4,11 +4,6 @@ export const xss_type_enum = {
     color: 'dark',
     label: '全部'
   },
-  1: {
-    type: 1,
-    color: 'text-secondary',
-    label: '图片'
-  },
   2: {
     type: 2,
     color: 'text-info',
@@ -19,4 +14,17 @@ export const xss_type_enum = {
     color: 'text-primary',
     label: '命令'
   },
+}
+
+export const xss_status_enum = {
+  1: {
+    type: 1,
+    color: 'text-primary',
+    label: '连接中'
+  },
+  2: {
+    type: 2,
+    color: 'dark',
+    label: '已断开'
+  }
 }

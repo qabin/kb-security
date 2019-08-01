@@ -3,10 +3,12 @@ package com.bin.kong.security.server.controller.xss;
 import com.alibaba.fastjson.JSON;
 import com.bin.kong.security.contract.common.GenericResponse;
 import com.bin.kong.security.core.constants.ResponseConstants;
+import com.bin.kong.security.core.enums.XssStatusEnum;
 import com.bin.kong.security.core.enums.XssTypeEnum;
 import com.bin.kong.security.core.utils.PPStringUtils;
 import com.bin.kong.security.model.xss.entity.XssInfo;
 import com.bin.kong.security.model.xss.search.XssInfoSearch;
+import com.bin.kong.security.server.controller.BaseController;
 import com.bin.kong.security.server.service.xss.IXssInfoService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @RestController
 @RequestMapping(value = "")
 @Slf4j
-public class XssInfoController {
+public class XssInfoController extends BaseController {
     @Resource
     private IXssInfoService xssInfoService;
 
@@ -57,13 +59,14 @@ public class XssInfoController {
             if (StringUtils.isNotEmpty(info.getImg()))
                 info.setImg(PPStringUtils.urlDecode(info.getImg()));
             info.setType(XssTypeEnum.SCREEN.getCode());
-
+            info.setUser_id(info.getUser_id());
             info.setUser_agent(request.getHeader("User-Agent"));
+            info.setUpdate_time(new Date());
             xssInfoService.insert(info);
             response.setStatus(ResponseConstants.SUCCESS_CODE);
             response.setData(info.getId());
         } catch (Exception e) {
-            log.error("执行xss_info_add异常：" + e.getCause());
+            log.error("执行xss_info_screen_add异常：" + e);
             response.setStatus(ResponseConstants.FAIL_CODE);
         }
         return response;
@@ -76,8 +79,17 @@ public class XssInfoController {
             try {
                 if (StringUtils.isNotEmpty(request.getParameter("id"))) {
                     Integer id = Integer.valueOf(request.getParameter("id"));
+                    xssInfoService.update(XssInfo.builder()
+                            .id(id)
+                            .status(XssStatusEnum.CONNECTING.getCode())
+                            .update_time(new Date())
+                            .build());
                     XssInfo xssInfo = xssInfoService.get(id);
-                    genericResponse.setData(xssInfo.getCommand());
+                    if (null != xssInfo) {
+                        genericResponse.setData(xssInfo.getCommand());
+                    } else {
+                        genericResponse.setData(null);
+                    }
                 } else {
                     XssInfo xssInfo = XssInfo.builder()
                             .ip(request.getRemoteAddr())
@@ -85,6 +97,9 @@ public class XssInfoController {
                             .domain(PPStringUtils.urlDecode(request.getParameter("domain")))
                             .url(PPStringUtils.urlDecode(request.getParameter("url")))
                             .create_time(new Date())
+                            .update_time(new Date())
+                            .user_id(Integer.valueOf(request.getParameter("user_id")))
+                            .status(XssStatusEnum.CONNECTING.getCode())
                             .user_agent(request.getHeader("User-Agent"))
                             .type(XssTypeEnum.COMMAND.getCode())
                             .build();
@@ -94,7 +109,7 @@ public class XssInfoController {
                 genericResponse.setStatus(ResponseConstants.SUCCESS_CODE);
 
             } catch (Exception e) {
-                log.error("执行xss_info_add异常：" + e.getCause());
+                log.error("执行xss_info_command异常：" + e);
                 genericResponse.setStatus(ResponseConstants.FAIL_CODE);
             }
             String result = request.getParameter("callback") + "(" + JSON.toJSONString(genericResponse) + ")";
@@ -134,11 +149,12 @@ public class XssInfoController {
 
 
     @RequestMapping(value = "/xssinfos/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public GenericResponse xss_info_list_search(@RequestParam String searchKey, @RequestParam Integer pageNum, @RequestParam Integer type) {
+    public GenericResponse xss_info_list_search(@RequestParam String searchKey, @RequestParam Integer pageNum, @RequestParam Integer type, HttpServletRequest httpServletRequest) {
         GenericResponse response = new GenericResponse();
         try {
             XssInfoSearch search = XssInfoSearch.builder()
                     .searchKey(searchKey)
+                    .user_id(super.getUserInfo(httpServletRequest).getId())
                     .type(type)
                     .pageNum(pageNum)
                     .build();
@@ -171,6 +187,20 @@ public class XssInfoController {
             response.setStatus(ResponseConstants.FAIL_CODE);
         }
 
+        return response;
+    }
+
+    @RequestMapping(value = "/xssinfos/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public GenericResponse xss_info_delete(@PathVariable("id") @NonNull Integer id) {
+        GenericResponse response = new GenericResponse();
+        try {
+            Integer count = xssInfoService.delete(id);
+            response.setStatus(ResponseConstants.SUCCESS_CODE);
+            response.setData(count);
+        } catch (Exception e) {
+            log.error("执行xss_info_delete异常：" + e.getCause());
+            response.setStatus(ResponseConstants.FAIL_CODE);
+        }
         return response;
     }
 }

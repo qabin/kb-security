@@ -1,4 +1,4 @@
-import {ajax_login_in} from '../../../api/user/user_login_api'
+import store from '../../../store'
 
 export default {
   name: 'login_index',
@@ -25,7 +25,10 @@ export default {
     }, [
       h('div', {
         staticClass: 'pp-login-wrap animated flipInY shadow-3 pp-radius-3',
-
+        on:{
+          keyup:
+            e => e.key === 'Enter' && store.dispatch('user/login', this.model),
+        }
       }, [
         h('div', {
             staticClass: 'cursor-pointer',
@@ -150,21 +153,7 @@ export default {
               if (this.remember_me) {
                 this.remember_user()
               }
-              ajax_login_in(this.model)
-                .then(d => {
-                  if (d.status === 1) {
-                    this.$store.dispatch('user/getUserInfo').then().catch()
-                    this.$router.push({path: '/home'})
-                  } else {
-                    if (d.message) {
-                      this.$q.err(d.message)
-                    } else {
-                      this.$q.err('登录异常！')
-                    }
-                  }
-                }).catch(e => {
-                this.$q.err('登录异常！')
-              })
+              store.dispatch('user/login', this.model)
             }
           }
 

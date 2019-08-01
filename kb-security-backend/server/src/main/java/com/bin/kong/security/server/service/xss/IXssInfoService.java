@@ -15,4 +15,6 @@ public interface IXssInfoService {
     Integer searchCount(XssInfoSearch search);
 
     Integer update(XssInfo info);
+
+    Integer delete(Integer id);
 }
