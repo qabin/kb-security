@@ -105,17 +105,16 @@ public class ChatInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/chatinfos/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public GenericResponse search_chat_list(@RequestParam String searchKey, @RequestParam(required = false) Integer type, @RequestParam Integer pageNum, @RequestParam(required = false) Boolean openSqlHack, @RequestParam(required = false) String login_name, HttpServletRequest httpServletRequest) {
+    public GenericResponse search_chat_list(@RequestParam String searchKey, @RequestParam(required = false) Integer type, @RequestParam Integer pageNum, @RequestParam(required = false) Boolean openSqlHack, @RequestParam(required = false) Boolean all_chat, HttpServletRequest httpServletRequest) {
         GenericResponse response = new GenericResponse();
         try {
             ChatInfoSearch search = ChatInfoSearch.builder()
                     .pageNum(pageNum)
-                    .login_name(login_name)
                     .searchKey(searchKey)
                     .type(type)
                     .build();
             UserInfo userInfo = super.getUserInfo(httpServletRequest);
-            if (userInfo.getUser_type() == UserTypeEnum.USER.getCode()) {
+            if (userInfo.getUser_type() == UserTypeEnum.USER.getCode() && null != all_chat && all_chat) {
                 search.setUser_id(userInfo.getId());
             }
 

@@ -16,7 +16,7 @@ CREATE TABLE `kb-security`.`chat_info` (
   `praise_count` int(11) NOT NULL DEFAULT '0' COMMENT '点赞数量',
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `kb-security`.`user_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -28,7 +28,7 @@ CREATE TABLE `kb-security`.`user_info` (
   `user_type` int(11) NOT NULL DEFAULT '1' COMMENT '1. 普通用户 2. 管理员',
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_name_UNIQUE` (`login_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `kb-security`.`xss_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -45,4 +45,4 @@ CREATE TABLE `kb-security`.`xss_info` (
   `status` int(11) NOT NULL DEFAULT '2' COMMENT '1. 连接中   2 .断开',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

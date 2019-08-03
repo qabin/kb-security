@@ -9,13 +9,13 @@ export function ajax_add_chat_info (form) {
 
 }
 
-export function ajax_chat_info_list_search (key, pageNum, type, openSqlHack) {
+export function ajax_chat_info_list_search (key, pageNum, type, openSqlHack,all_chat) {
   let form = {
     searchKey: key,
     pageNum: pageNum,
     type: type,
     openSqlHack: openSqlHack,
-    login_name: ''
+    all_chat:all_chat
   }
   return axiosInstance({
     url: '/api/chatinfos/search',

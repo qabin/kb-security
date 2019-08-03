@@ -17,7 +17,7 @@
         <q-btn class="full-height shadow-0"
                icon="import_contacts"
                size="lg"
-               @click.native="open_url('https://blog.csdn.net/a787373009/article/category/9170556')"
+               @click.native="open_url('https://blog.csdn.net/a787373009/article/category/9187978')"
         >
           <q-tooltip :offset="[5,5]">使用教程</q-tooltip>
         </q-btn>

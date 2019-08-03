@@ -14,6 +14,7 @@ export default {
     pageNum: 1,
     chat_list: [],
     xss_escape: false,
+    all_chat:true
   }),
   methods: {
     render_search (h) {
@@ -166,7 +167,7 @@ export default {
       ])
     },
     refresh_catalog () {
-      ajax_chat_info_list_search(this.search_key, this.pageNum, this.order_by_type).then(data => {
+      ajax_chat_info_list_search(this.search_key, this.pageNum, this.order_by_type,false,this.all_chat).then(data => {
         if (data.status === 1) {
           this.chat_list = data.data.dataList
         } else {
@@ -196,7 +197,26 @@ export default {
         }, [
           Object.keys(chat_order_by_enum).map(key => [
             this.render_order_btn(h, chat_order_by_enum[key])
-          ])]),
+          ]),
+          h('q-toggle', {
+            staticClass: 'font-13 text-weight-bold float-right q-ml-md',
+            style: {
+              marginBottom:'5px'
+            },
+            props: {
+              label: '只看自己',
+              leftLabel: true,
+              value: this.all_chat,
+              color: 'deep-orange'
+            },
+            on: {
+              input: (v) => {
+                this.all_chat = v
+                this.$nextTick(this.refresh_catalog())
+              }
+            }
+          })
+        ]),
       ]),
       h('div', {}, [
         this.chat_list.map(chat => [
