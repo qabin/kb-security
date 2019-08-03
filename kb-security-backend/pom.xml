@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.bin.kong.security</groupId>
-    <artifactId>kb-security-backend</artifactId>
+    <artifactId>kb-security</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>kb-security-backend</name>
+    <name>kb-security</name>
     <packaging>pom</packaging>
 
     <description>Demo project for Spring Boot</description>
